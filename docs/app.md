@@ -113,7 +113,7 @@ roles:
 
 - **roles**. RBAC application model for user access. You can define a role model to divide responsibility. For example, DevOps, who can create and manage templates, and Developers, who can only create instances from predefined templates without modifying them.
 
-    Example, allow role edid ProjectSet for attributes - annotations, labels, namespace, template (all - all avaliable attributes)
+    Example, allow role edit ProjectSet for attributes - annotations, labels, namespace, template
 
         ```
         (.*)/projectset/edit/:

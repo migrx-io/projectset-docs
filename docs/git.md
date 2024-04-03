@@ -37,5 +37,7 @@ Example
 
     *Place .gitignore to each directory to save empty dir to git*
 
+[Example repo](https://github.com/migrx-io/projectset-crds)
+
 
 
