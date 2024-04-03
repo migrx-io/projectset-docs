@@ -1,4 +1,4 @@
-# Overview
+# Getting started
 
 The product include 3 main components that require installation and configuration:
 
@@ -41,7 +41,7 @@ You’ll need a Kubernetes cluster to run against. You can use [KIND](https://si
 
         kubectl apply -f https://raw.githubusercontent.com/migrx-io/projectset-operator/main/config/manifests.yaml
 
-4. Create ProjectSetSync configuration
+4. Create ProjectSetSync configuration `projectsetsync.yaml`
 
     To start sync process from git you need to create CR.  See [example and details](/resources/#projectsetsync))
 
