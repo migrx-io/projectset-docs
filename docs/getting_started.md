@@ -43,27 +43,12 @@ You’ll need a Kubernetes cluster to run against. You can use [KIND](https://si
 
 4. Create ProjectSetSync configuration
 
-    To start sync process from git you need to create CR (see [details](/resources/#projectsetsync))
+    To start sync process from git you need to create CR.  See [example and details](/resources/#projectsetsync))
 
-    Example
+5. Apply ProsetSetSync to create sync resource on cluster
 
-        apiVersion: project.migrx.io/v1alpha1
-        kind: ProjectSetSync
-        metadata:
-        labels:
-            app.kubernetes.io/name: projectsetsync
-            app.kubernetes.io/instance: projectsetsync-instance
-            app.kubernetes.io/part-of: projectset-operator
-            app.kubernetes.io/managed-by: kustomize
-            app.kubernetes.io/created-by: projectset-operator
-        name: test-ocp-cluster
-        spec:
-        gitRepo: https://github.com/migrx-io/projectset-crds.git    # git uri
-        envName: test-ocp-cluster                                   # env name from projectsets.yaml (see git repo structure)
-        gitBranch: main                                             # branch name
-        syncSecInterval: 10                                         # pull sync interval
-        confFile: projectsets.yaml                                  # path to git config env file  (by default projectsets.yaml)
 
+        kubectl apply -f projectsetsync.yaml
 
 
 ## ProjectSet App
@@ -77,8 +62,7 @@ You’ll need a Kubernetes cluster to run against. You can use [KIND](https://si
 
 2. Create app.yaml config
 
-    Describe app configuration in `app.yaml` and define repos, auth and rbac (see [details](/resources/#projectsetsync))
-
+    Describe app configuration in `app.yaml` and define repos, auth and rbac. See [example and details](/app/#configuration))
 
 
 3. Create secret with `app.yaml` for app
@@ -87,6 +71,4 @@ You’ll need a Kubernetes cluster to run against. You can use [KIND](https://si
 
 4. Install App
 
-        kubectl apply -f https://raw.githubusercontent.com/migrx-io/projectset-operator/main/config/manifests.yaml
-
-
+        kubectl apply -f https://raw.githubusercontent.com/migrx-io/projectset-app/main/deploy/manifests.yaml
