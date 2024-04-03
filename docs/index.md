@@ -34,7 +34,7 @@
 
 ## Where to get started
 
-To get started, please read through our Guides to get a jump start. See our getting started guide for installation instructions.
+To get started, please view our [Guides](./ui_guide.md) to get a jump start. See our [getting started guide](./getting_started.md) for installation instructions.
 
 ## How to get involved
 

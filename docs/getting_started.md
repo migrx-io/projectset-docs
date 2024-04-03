@@ -1,5 +1,12 @@
 # Getting started
 
+## Video Guide how to install product
+
+<iframe width="900" height="506" src="https://www.youtube.com/embed/0bI4nY9UUyw" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
+
+## Installation
+
 The product include 3 main components that require installation and configuration:
 
 ![Overview](./img/install_app.png)
@@ -10,8 +17,7 @@ The product include 3 main components that require installation and configuratio
 
 3. **ProjectSet App**. This application serves as an interface to the OpenAPI and UI, enabling users to create ProjectSet templates and instances. Deployed as a Kubernetes application, it acts as the entry point for UI and API interactions. It supports deployment on one or more clusters for high availability, ensuring reliability and scalability.
 
-
-## Git Repository
+### Git Repository
 
 1. Create new repo with env structure (see [example](./git.md))
 
@@ -21,7 +27,7 @@ The product include 3 main components that require installation and configuratio
 
 [Example repo](https://github.com/migrx-io/projectset-crds)
 
-## ProjectSet Operator
+### ProjectSet Operator
 
 You’ll need a Kubernetes cluster to run against. You can use [KIND](https://sigs.k8s.io/kind) to get a local cluster for testing, or run against a remote cluster.
 **Note:** Your controller will automatically use the current context in your kubeconfig file (i.e. whatever cluster `kubectl cluster-info` shows).
@@ -51,7 +57,7 @@ You’ll need a Kubernetes cluster to run against. You can use [KIND](https://si
         kubectl apply -f projectsetsync.yaml
 
 
-## ProjectSet App
+### ProjectSet App
 
 *ProjectSet App can be installed in one cluster to manage all other clusters. Consider installing the ProjectSet App on more clusters only for high availability*
 
@@ -72,3 +78,8 @@ You’ll need a Kubernetes cluster to run against. You can use [KIND](https://si
 4. Install App
 
         kubectl apply -f https://raw.githubusercontent.com/migrx-io/projectset-app/main/deploy/manifests.yaml
+
+
+## What's next
+
+To get started, please view our [Guides](./ui_guide.md) 
