@@ -1,256 +1,162 @@
 # Overview
 
-**ProjectSet Operator** comes with three core resources: 
-
-1. ProjectSetTemplate
-2. ProjectSet
-3. ProjectSetSync
-
-### ProjectSetTemplate
-
-You can define and share common rules and policies across instances. It can help you to manage and reuse them regarding your company's policy and governance. Instances that reference the same template inherit its rules but can be overridden in the instances themselves.
-
-![Overview](./img/migrx_yaml.png)
-
-Template includes k8s defininitions of resources:
-
-- [Labels](https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/). Labels with be passed to created k8s resources 
-
-- [Annotations](https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations/). Annotations will be passed to created k8s resources
-
-- [Resources Quota](https://kubernetes.io/docs/concepts/policy/resource-quotas/)
-
-- [Limit Range](https://kubernetes.io/docs/concepts/policy/limit-range/)
-
-- [Roles](https://kubernetes.io/docs/reference/access-authn-authz/rbac/)
-
-- [Role Binding](https://kubernetes.io/docs/reference/access-authn-authz/rbac/). Maps IdP groups to Roles.
-
-- [Network Policy](https://kubernetes.io/docs/concepts/services-networking/network-policies/)
-
-- [Secret](https://external-secrets.io/latest/introduction/overview/#externalsecret). Require [External Secret Operator](https://external-secrets.io/latest/)
-
-- [Config Map](https://kubernetes.io/docs/concepts/configuration/configmap/)
-
-- [Custom Resource Definition](https://kubernetes.io/docs/concepts/extend-kubernetes/api-extension/custom-resources/)
+**ProjectSet App** is an application that exposes an OpenAPI interface and UI, allowing users to create ProjectSet templates and ProjectSet instances. The application is integrated with identity providers like Active Directory (AD) and encapsulates state generation logic and integration with external services such as OpenAI and ServiceNow. Users can interact with the app directly using the UI and/or MS Teams/Slack bots that are integrated with the ProjectSet App using the API.
 
 
-Example: 
+## Deployment
+
+The application is deployed as a Kubernetes application and serves as the entry point for UI and API interactions. It can be deployed on one or more clusters for high availability.
+
+
+## Persistence
+
+Application is stateless and pull data from Git. It use temprorary local storage for temp data and cache only.
+
+
+## Configuration
+
+Application can be configured usign app.yaml file that stored as secret.
+
+Example
 
 ```
-apiVersion: project.migrx.io/v1alpha1
-kind: ProjectSetTemplate
-metadata:
-  labels:
-    app.kubernetes.io/name: projectsettemplate
-    app.kubernetes.io/instance: dev-small
-    app.kubernetes.io/part-of: projectset-operator
-    app.kubernetes.io/managed-by: kustomize
-    app.kubernetes.io/created-by: projectset-operator
-  name: dev-small
-spec:
+envs:
+  test-ocp-cluster:
+    description: Dev repo for dev/preprod clusters
+    url: https://github.com/migrx-io/projectset-crds.git
+    branch: main
+    token: <token>
+    conf_file: projectsets.yaml
+  prod-ocp-cluster:
+    description: Prod repo for production clusters
+    url: https://github.com/migrx-io/projectset-crds.git
+    branch: main  
+    token: <token>
+    conf_file: projectsets.yaml
 
-  labels:
-    stage: dev
-  annotations:
-    app.kubernetes.io/template: dev-small
+auth:
+  ldap:
+    url: "ldap://127.0.0.1:389"
+    bindDN: "cn=admin,dc=example,dc=org"
+    bindPW: <password>
 
-  roles:
-    developer:
-      - apiGroups:
-          - ""
-          - apps
-        resources:
-          - configmaps
-          - deployments
-          - pods
-          - pods/log
-        verbs: ["*"]
+    userSearch:
+      baseDN: "ou=people,dc=example,dc=org"
+      filter: "(objectclass=inetOrgPerson)"
+      user_map:
+        username: "mail"
+        email: "mail"
 
-    admin:
-      - apiGroups:
-          - ""
-          - apps
-          - autoscaling
-          - batch
-          - extensions
-          - policy
-          - rbac.authorization.k8s.io
-          - networking.k8s.io
-          - storage.k8s.io
-          - metrics.k8s.io
-        resources:
-          - configmaps
-          - daemonsets
-          - deployments
-          - events
-          - endpoints
-          - jobs
-          - pods
-          - pods/log
-          - pods/exec
-          - persistentvolumes
-          - persistentvolumeclaims
-          - secrets
-          - serviceaccounts
-          - services
-          - statefulsets
-        verbs: ["*"]
+    groupSearch:                                                            
+      baseDN: "ou=groups,dc=example,dc=org"
+      filter: "(objectClass=groupOfNames)"
+      group_map:
+        admins: "admin"
+        developers: "user"
 
-  roleBindings:
-    admin:
-      - kind: "Group"
-        name: "developer"
-      - kind: "Group"
-        name: "admin"
-    developer:
-      - kind: "Group"
-        name: "developer"
+roles:
+  user:
+    (.*)/projectset/?$:
+      - all
+    (.*)/projectset/edit/:
+      - annotations
+      - labels
+      - namespace
+      - template
+    (.*)/projectset/delete/:
+      - all
+    (.*)/projectset/create/?$:
+      - annotations
+      - labels
+      - namespace
+      - template
+    (.*)/projectsettemplate/?$:
+      - all
+    (.*)/repo/?$:
+      - all
+    (.*)/logout/?$:
+      - all
 
-  resourceQuota:
-    hard:
-      requests.cpu: "2"
-      requests.memory: 3Gi
-      limits.cpu: "4"
-      limits.memory: 6Gi
+  admin:
+    (.*)/projectset/?$:
+      - all
+    (.*)/projectset/edit/:
+      - all
+    (.*)/projectset/delete/:
+      - all
+    (.*)/projectset/create/?$:
+      - all
+    (.*)/repo/?$:
+      - all
+    (.*)/logout/?$:
+      - all
+    (.*)/repo/?$:
+      - all
+    (.*)/logout/?$:
+      - all
+    (.*)/projectsettemplate/?$:
+      - all
+    (.*)/projectsettemplate/edit/:
+      - all
+    (.*)/projectsettemplate/delete/:
+      - all
+    (.*)/projectsettemplate/create/?$:
+      - all
 
-  limitRange:
-    limits:
-      - default:
-          cpu: 500m
-          memory: "50Mi"
-        defaultRequest:
-          cpu: 500m
-          memory: "50Mi"
-        max:
-          cpu: "1"
-          memory: "4Gi"
-        min:
-          cpu: 100m
-          memory: "50Mi"
-        type: Container
+```
+- **envs**. Declare list of Git repo/Clusters to work with. See [Git repo structure](./git.md)
 
-  networkPolicy:
+    `<token>` - access token to pull/push and create pull request
 
-    allow-dns:
-      podSelector:
-        matchLabels: {}
-      policyTypes:
-      - Egress
-      egress:
-      - to:
-        - namespaceSelector:
-            matchLabels:
-              name: kube-system
-        ports:
-        - protocol: UDP
-          port: 53
+- **auth**. Authentication method (Active Directory). You need to provide the address to the Active Directory with an admin service account to read users and groups. Additionally, you should define search queries for users and groups and mapping to map Active Directory users and groups to cluster groups (this is needed for role binding).
 
-    deny-egress:
-      podSelector:
-        matchLabels: {}
-      policyTypes:
-        - Egress
 
-    deny-ingress:
-      podSelector:
-        matchLabels: {}
-      policyTypes:
-        - Egress
+- **roles**. RBAC application model for user access. You can define a role model to divide responsibility. For example, DevOps, who can create and manage templates, and Developers, who can only create instances from predefined templates without modifying them.
+
+    Example, allow role edid ProjectSet for attributes - annotations, labels, namespace, template (all - all avaliable attributes)
+
+        ```
+        (.*)/projectset/edit/:
+        - annotations
+        - labels
+        - namespace
+        - template
+
+        ```
+
+### Environment variables
+
+```
+export JWT_SECRET_KEY=        # secret for JWT salt
+export X_API_KEY=             # API key for service-service communication
+export JWT_EXP=31536000
+export JWT_HEADER="JWT"
+export PWORKERS=1
+export PWORKERS_SLEEP=15
+export APP_CONF=./app.yaml 
+export LOGLEVEL=INFO 
 
 ```
 
-### ProjectSet
+## OpenAPI (Swagger) 
 
-To onboard Kubernetes resources on a cluster, you need to create a ProjectSet custom resource. If you have defined templates and reference them from the custom resource ProjectSet instance, it will inherit the template and create all nested resources based on template values. It's possible to override some or all template values in the instance.
+!!swagger apispec_1.json!!
 
+## UI
 
-Instance includes k8s defininitions of resources:
+Login page
 
-- [Labels](https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/). Labels will be passed to created Kubernetes resources. If templates are used, then instance values will be added to the template's ones.
+![Login](./img/ui_login.png)
 
-- [Annotations](https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations/). Annotations will be passed to created Kubernetes resources. If templates are used, then instance values will be added to the template's ones. 
+Enviroments page
 
-- **template**. ProjectSetTemplate name
+![Envs](./img/ui_envs.png)
 
-- [Resources Quota](https://kubernetes.io/docs/concepts/policy/resource-quotas/). If not specified, then template values will be used if defined.
+ProjectSet page
 
-- [Limit Range](https://kubernetes.io/docs/concepts/policy/limit-range/). If not specified, then template values will be used if defined.
+![ProjectSet](./img/ui_projectset.png)
 
-- [Roles](https://kubernetes.io/docs/reference/access-authn-authz/rbac/). If not specified, then template values will be used if defined.
+ProjectSet Template page
 
-- [Role Binding](https://kubernetes.io/docs/reference/access-authn-authz/rbac/). Maps IdP groups to Roles. If not specified, then template values will be used if defined.
-
-- [Network Policy](https://kubernetes.io/docs/concepts/services-networking/network-policies/). If not specified, then template values will be used if defined.
-
-- [Secret](https://external-secrets.io/latest/introduction/overview/#externalsecret). Require [External Secret Operator](https://external-secrets.io/latest/). If not specified, then template values will be used if defined.
-
-- [Config Map](https://kubernetes.io/docs/concepts/configuration/configmap/). If not specified, then template values will be used if defined.
-
-- [Custom Resource Definition](https://kubernetes.io/docs/concepts/extend-kubernetes/api-extension/custom-resources/). If not specified, then template values will be used if defined.
-
-
-Example: 
-
-```
-apiVersion: project.migrx.io/v1alpha1
-kind: ProjectSet
-metadata:
-  labels:
-    app.kubernetes.io/name: projectset
-    app.kubernetes.io/instance: projectset 
-    app.kubernetes.io/part-of: projectset-operator
-    app.kubernetes.io/managed-by: kustomize
-    app.kubernetes.io/created-by: projectset-operator
-  name: dev-app
-spec:
-  namespace: dev-app
-  labels:
-    app: frontend
-  annotations:
-    app.kubernetes.io/name: dev-app 
-  template: dev-small
-
-```
-
-
-### ProjectSetSync
-
-ProjectSetSync defines the Git source for the cluster to sync ProjectSetTemplate and ProjectSet custom resources.
-
-Instance includes attributes:
-
-- **gitRepo**. Git source repository with ProjectSetTemplate and ProjectSet for the cluster.
-
-- **envName**. Environment name for the cluster. One repository might contain multiple clusters/directories, so you should specify the particular cluster environment directory within the repository.
-
-- **gitBranch**. Git branch to sync state and where pull requests are merged.
-
-- **syncSecInterval**. Sync interval. The ProjectSet Operator will check for the latest changes within that interval.
-
-- **confFile**. Conf file (projectsets.yaml) for the repository that describes the directory hierarchy structure for clusters/environments. It defines the directory path for each repository.
-
-
-Example: 
-
-```
-apiVersion: project.migrx.io/v1alpha1
-kind: ProjectSetSync
-metadata:
-  labels:
-    app.kubernetes.io/name: projectsetsync
-    app.kubernetes.io/instance: projectsetsync-instance
-    app.kubernetes.io/part-of: projectset-operator
-    app.kubernetes.io/managed-by: kustomize
-    app.kubernetes.io/created-by: projectset-operator
-  name: projectsetsync-instance
-spec:
-  gitRepo: https://github.com/migrx-io/projectset-crds.git
-  envName: test-ocp-cluster
-  gitBranch: main
-  syncSecInterval: 15
-  confFile: projectsets.yaml
-
-```
-
+![ProjectSetTemplate](./img/ui_projectsettemplate.png)
 
