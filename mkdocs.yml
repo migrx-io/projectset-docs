@@ -2,7 +2,9 @@ site_name: projset.io
 nav:
   - Overview:
     - Architecture: index.md
-    - Core Resources: resources.md
+    - Git Source Structure: git.md
+    - Core Operator Resources: resources.md
+    - ProjectSet App: app.md
   - Getting started: getting_started.md
   - User guide: guides.md
   - API: api.md

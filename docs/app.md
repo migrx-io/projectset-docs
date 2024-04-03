@@ -6,9 +6,6 @@
 2. ProjectSet
 3. ProjectSetSync
 
-*You should use ProjectSet App to generate and manage ProjectSetTemplate and ProjectSet CR*
-
-
 ### ProjectSetTemplate
 
 You can define and share common rules and policies across instances. It can help you to manage and reuse them regarding your company's policy and governance. Instances that reference the same template inherit its rules but can be overridden in the instances themselves.
