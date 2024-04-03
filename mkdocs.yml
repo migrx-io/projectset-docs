@@ -6,7 +6,9 @@ nav:
     - Core Operator Resources: resources.md
     - ProjectSet App: app.md
   - Getting started: getting_started.md
-  - User guide: guides.md
+  - User guide:
+    - Basic UI: ui_guide.md
+    - GPT ChatBot: gpt_guide.md
   - API: api.md
 
 theme:
