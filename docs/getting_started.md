@@ -1,11 +1,6 @@
-# Getting started
+# Install
 
-## Video Guide how to install product
-
-<iframe width="900" height="506" src="https://www.youtube.com/embed/0bI4nY9UUyw" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
-
-
-## Installation
+## Overview
 
 The product include 3 main components that require installation and configuration:
 
@@ -78,6 +73,10 @@ You’ll need a Kubernetes cluster to run against. You can use [KIND](https://si
 4. Install App
 
         kubectl apply -f https://raw.githubusercontent.com/migrx-io/projectset-app/main/deploy/manifests.yaml
+
+## Video Guide how to install product
+
+<iframe width="900" height="506" src="https://www.youtube.com/embed/0bI4nY9UUyw" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
 
 ## What's next
