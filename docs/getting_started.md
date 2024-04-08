@@ -81,7 +81,7 @@ You’ll need a Kubernetes cluster to run against. You can use [KIND](https://si
 
 ## Video Guide how to install product
 
-<iframe width="900" height="506" src="https://www.youtube.com/embed/0bI4nY9UUyw" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+<iframe width="900" height="506" src="https://www.youtube.com/embed/lJ5iwvlds5M" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
 
 ## What's next
