@@ -74,6 +74,11 @@ You’ll need a Kubernetes cluster to run against. You can use [KIND](https://si
 
         kubectl apply -f https://raw.githubusercontent.com/migrx-io/projectset-app/main/deploy/manifests.yaml
 
+5. Expose route 
+
+        kubectl expose svc projectset-app-service -n projectset-app-system
+
+
 ## Video Guide how to install product
 
 <iframe width="900" height="506" src="https://www.youtube.com/embed/0bI4nY9UUyw" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
